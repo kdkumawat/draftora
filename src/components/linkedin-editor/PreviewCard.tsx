@@ -17,8 +17,8 @@ import { parseDocument } from "@/lib/parser/tokenize";
 import { getLinkedInFold, getSeeMoreFold } from "@/lib/linkedin/parse";
 import { cn } from "@/lib/utils/cn";
 
-/** Feed preview avatar - place `public/IMG_1165.PNG` in the project */
-const PREVIEW_AVATAR = "/IMG_1165.PNG";
+/** Feed preview avatar - place `public/IMG_1165_small.PNG` in the project */
+const PREVIEW_AVATAR = "/IMG_1165_small.png";
 
 type PreviewCardProps = {
   fullPlain: string;
