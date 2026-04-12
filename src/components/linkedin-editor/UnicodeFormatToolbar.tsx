@@ -194,12 +194,16 @@ export const UnicodeFormatToolbar = forwardRef<
   return (
     <div
       ref={ref}
-      className="flex min-h-[48px] items-center border-b border-[var(--app-chrome-border)] bg-[var(--app-chrome)]"
+      className="flex min-h-10 items-center border-b border-[var(--app-chrome-border)] bg-[var(--app-chrome)] sm:min-h-11"
       role="toolbar"
       aria-label="Formatting"
     >
       <div
-        className="flex w-full min-w-0 flex-nowrap items-center gap-x-1 overflow-x-auto overflow-y-hidden px-2 py-2 [scrollbar-width:thin]"
+        className={cn(
+          "flex w-full min-w-0 flex-wrap items-center gap-x-0.5 gap-y-1 px-1.5 py-1.5 sm:px-2 sm:py-1.5",
+          /* Phones: one scrollable row so the sheet stays short */
+          "max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:overflow-y-hidden max-sm:scrollbar-hide",
+        )}
       >
         <ToolGroup>
           <ToolbarButton
@@ -207,28 +211,28 @@ export const UnicodeFormatToolbar = forwardRef<
             pressed={formatActive?.bold}
             onClick={() => apply("bold")}
           >
-            <Bold className="h-[17px] w-[17px]" strokeWidth={2.5} />
+            <Bold className="h-[15px] w-[15px]" strokeWidth={2.5} />
           </ToolbarButton>
           <ToolbarButton
             tooltip={tt("Italic", "I")}
             pressed={formatActive?.italic}
             onClick={() => apply("italic")}
           >
-            <Italic className="h-[17px] w-[17px]" strokeWidth={2.5} />
+            <Italic className="h-[15px] w-[15px]" strokeWidth={2.5} />
           </ToolbarButton>
           <ToolbarButton
             tooltip={tt("Underline", "U")}
             pressed={formatActive?.underline}
             onClick={() => applyCombining(U_UNDER)}
           >
-            <Underline className="h-[17px] w-[17px]" strokeWidth={2.25} />
+            <Underline className="h-[15px] w-[15px]" strokeWidth={2.25} />
           </ToolbarButton>
           <ToolbarButton
             tooltip={ttShift("Strikethrough", "X")}
             pressed={formatActive?.strike}
             onClick={() => applyCombining(U_STRIKE)}
           >
-            <Strikethrough className="h-[17px] w-[17px]" strokeWidth={2.25} />
+            <Strikethrough className="h-[15px] w-[15px]" strokeWidth={2.25} />
           </ToolbarButton>
         </ToolGroup>
 
@@ -236,13 +240,13 @@ export const UnicodeFormatToolbar = forwardRef<
 
         <ToolGroup>
           <ToolbarButton tooltip="Emoji" onClick={onEmoji}>
-            <Smile className="h-[17px] w-[17px]" strokeWidth={2} />
+            <Smile className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
           <ToolbarButton tooltip="Image" onClick={onImage}>
-            <ImageIcon className="h-[17px] w-[17px]" strokeWidth={2} />
+            <ImageIcon className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
           <ToolbarButton tooltip="Link" onClick={onLink}>
-            <Link2 className="h-[17px] w-[17px]" strokeWidth={2} />
+            <Link2 className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
         </ToolGroup>
 
@@ -254,17 +258,17 @@ export const UnicodeFormatToolbar = forwardRef<
             onClick={onUndo}
             disabled={!canUndo}
           >
-            <Undo2 className="h-[17px] w-[17px]" strokeWidth={2} />
+            <Undo2 className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
           <ToolbarButton
             tooltip={ttRedo()}
             onClick={onRedo}
             disabled={!canRedo}
           >
-            <Redo2 className="h-[17px] w-[17px]" strokeWidth={2} />
+            <Redo2 className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
           <ToolbarButton tooltip="Clear formatting" onClick={onClearFormatting}>
-            <Eraser className="h-[17px] w-[17px]" strokeWidth={2} />
+            <Eraser className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
         </ToolGroup>
 
@@ -272,16 +276,16 @@ export const UnicodeFormatToolbar = forwardRef<
 
         <ToolGroup>
           <ToolbarButton tooltip="Bullet list" onClick={onBullet}>
-            <List className="h-[17px] w-[17px]" strokeWidth={2} />
+            <List className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
           <ToolbarButton tooltip="Numbered list" onClick={onNumbered}>
-            <ListOrdered className="h-[17px] w-[17px]" strokeWidth={2} />
+            <ListOrdered className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
           <ToolbarButton tooltip="Indent" onClick={() => onIndent("in")}>
-            <IndentIncrease className="h-[17px] w-[17px]" strokeWidth={2} />
+            <IndentIncrease className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
           <ToolbarButton tooltip="Outdent" onClick={() => onIndent("out")}>
-            <IndentDecrease className="h-[17px] w-[17px]" strokeWidth={2} />
+            <IndentDecrease className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
         </ToolGroup>
 
@@ -289,7 +293,7 @@ export const UnicodeFormatToolbar = forwardRef<
 
         <ToolGroup>
           <ToolbarButton tooltip="Beautify" onClick={onBeautify}>
-            <Sparkles className="h-[17px] w-[17px]" strokeWidth={2} />
+            <Sparkles className="h-[15px] w-[15px]" strokeWidth={2} />
           </ToolbarButton>
         </ToolGroup>
       </div>
@@ -299,7 +303,7 @@ export const UnicodeFormatToolbar = forwardRef<
 
 function ToolGroup({ children }: { children: ReactNode }) {
   return (
-    <div className="flex shrink-0 flex-nowrap items-center gap-0.5 rounded-lg border border-[var(--app-chrome-border)] bg-[var(--app-chrome-elevated)] p-0.5">
+    <div className="flex shrink-0 flex-nowrap items-center gap-px rounded-md border border-[var(--app-chrome-border)] bg-[var(--app-chrome-elevated)] p-px">
       {children}
     </div>
   );
@@ -308,7 +312,7 @@ function ToolGroup({ children }: { children: ReactNode }) {
 function Divider() {
   return (
     <span
-      className="h-7 w-px shrink-0 self-center bg-[var(--app-chrome-border)]"
+      className="h-5 w-px shrink-0 self-center bg-[var(--app-chrome-border)]"
       aria-hidden
     />
   );
@@ -339,7 +343,7 @@ function ToolbarButton({
       onClick={onClick}
       onPointerDown={onPointerDown}
       className={cn(
-        "relative z-0 inline-flex h-9 min-w-9 shrink-0 touch-manipulation items-center justify-center overflow-hidden rounded-lg text-[var(--foreground)]/75",
+        "relative z-0 inline-flex h-8 min-w-8 shrink-0 touch-manipulation items-center justify-center overflow-hidden rounded-md text-[var(--foreground)]/75",
         "transition-[transform,background-color,color,box-shadow] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform",
         "hover:bg-black/[0.07] hover:text-[var(--foreground)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:hover:bg-white/[0.09] dark:hover:shadow-[0_1px_3px_rgba(0,0,0,0.25)]",
         "active:scale-[0.94] active:duration-100",
@@ -356,8 +360,8 @@ function ToolbarButton({
           style={{
             left: r.x,
             top: r.y,
-            width: 44,
-            height: 44,
+            width: 36,
+            height: 36,
             transform: "translate(-50%, -50%)",
             animation:
               "press-ripple 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards",

@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     siteName: "Draftora",
     title: "Draftora - LinkedIn Post Editor & Unicode Formatter",
     description:
-      "Write LinkedIn-ready posts with Unicode styling, mentions, hashtags, and live preview. Hosted on Cloudflare Pages.",
+      "Write LinkedIn-ready posts with Unicode styling, mentions, hashtags, and live preview.",
     images: [
       {
         url: "/logo.svg",

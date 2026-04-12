@@ -14,7 +14,6 @@ import {
 import { PreviewCard } from "@/components/linkedin-editor/PreviewCard";
 import { TemplatesDialog } from "@/components/linkedin-editor/TemplatesDialog";
 import { useUndoHistory } from "@/hooks/useUndoHistory";
-import { getSeeMoreFold } from "@/lib/linkedin/parse";
 import { normalizeNoEmDash } from "@/lib/unicode/normalize";
 import { cn } from "@/lib/utils/cn";
 
@@ -43,7 +42,6 @@ export function EditorPageClient() {
     left: number;
   } | null>(null);
   const [mobileTab, setMobileTab] = useState<"write" | "preview">("write");
-  const [previewExpanded, setPreviewExpanded] = useState(false);
   const [previewFrame, setPreviewFrame] = useState<PreviewFrame>("desktop");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -57,7 +55,6 @@ export function EditorPageClient() {
     if (!ok) return;
     resetHistory();
     setValue("");
-    setPreviewExpanded(false);
     requestAnimationFrame(() => textareaRef.current?.focus());
     toast.success("Draft cleared.");
   }, [value.length, resetHistory, setValue]);
@@ -92,9 +89,6 @@ export function EditorPageClient() {
   const handleEdit = useCallback(
     (v: string) => {
       onEdit(v);
-      if (!getSeeMoreFold(v).restHidden) {
-        setPreviewExpanded(false);
-      }
     },
     [onEdit],
   );
@@ -102,9 +96,6 @@ export function EditorPageClient() {
   const handleCommit = useCallback(
     (v: string) => {
       commitFromToolbar(v);
-      if (!getSeeMoreFold(v).restHidden) {
-        setPreviewExpanded(false);
-      }
     },
     [commitFromToolbar],
   );
@@ -139,10 +130,10 @@ export function EditorPageClient() {
         activePage="editor"
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4">
+      <div className="relative mx-auto max-w-7xl px-3 py-2 sm:px-5 sm:py-3 lg:px-6">
         <LandingHero />
 
-        <div className="mb-4 flex gap-2 md:hidden">
+        <div className="mb-3 flex gap-2 md:hidden">
           <button
             type="button"
             onClick={() => setMobileTab("write")}
@@ -169,11 +160,11 @@ export function EditorPageClient() {
           </button>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-8 xl:gap-10">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1.22fr)_minmax(0,0.78fr)] md:items-start md:gap-6 lg:gap-8 xl:gap-10">
           <section
             className={cn(
               "min-w-0",
-              mobileTab === "write" ? "block" : "hidden lg:block",
+              mobileTab === "write" ? "block" : "hidden md:block",
             )}
           >
             <PlainPostEditor
@@ -195,32 +186,32 @@ export function EditorPageClient() {
 
           <aside
             className={cn(
-              "min-w-0 lg:sticky lg:top-16",
-              mobileTab === "preview" ? "block" : "hidden lg:block",
+              "min-w-0 md:sticky md:top-[4.25rem] lg:top-16",
+              mobileTab === "preview" ? "block" : "hidden md:block",
             )}
           >
-            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
+            <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+              <div className="min-w-0">
                 <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--app-chrome-muted)]">
                   Feed preview
                 </p>
-                <p className="mt-0.5 text-sm text-[var(--app-chrome-muted)]">
-                  Hook teaser and post body (with see more)
+                <p className="mt-0.5 hidden text-sm text-[var(--app-chrome-muted)] sm:block">
+                  Hook teaser and post body
                 </p>
               </div>
-              <PreviewModeToggle value={previewFrame} onChange={setPreviewFrame} />
+              <div className="shrink-0 self-start sm:self-center">
+                <PreviewModeToggle value={previewFrame} onChange={setPreviewFrame} />
+              </div>
             </div>
             <PreviewCard
               fullPlain={value}
               isEmpty={value.trim().length === 0}
-              expanded={previewExpanded}
-              onToggleExpand={() => setPreviewExpanded((x) => !x)}
               frame={previewFrame}
             />
           </aside>
         </div>
 
-        <EditorSupportSections />
+        <EditorSupportSections className="mt-5 sm:mt-8" />
       </div>
 
       <TemplatesDialog
@@ -229,7 +220,6 @@ export function EditorPageClient() {
         onPick={(body) => {
           resetHistory();
           setValue(normalizeNoEmDash(body));
-          setPreviewExpanded(false);
           requestAnimationFrame(() => textareaRef.current?.focus());
         }}
       />

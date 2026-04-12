@@ -16,10 +16,12 @@ function Segment({
   active,
   onClick,
   children,
+  "aria-label": ariaLabel,
 }: {
   active: boolean;
   onClick: () => void;
   children: ReactNode;
+  "aria-label": string;
 }) {
   const { ripples, onPointerDown, removeRipple } = useRipple();
   return (
@@ -27,6 +29,7 @@ function Segment({
       type="button"
       onClick={onClick}
       onPointerDown={onPointerDown}
+      aria-label={ariaLabel}
       className={cn(
         "relative inline-flex items-center gap-1.5 overflow-hidden rounded-full px-3 py-1.5 text-xs font-medium",
         "transition-[transform,background-color,color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
@@ -72,13 +75,21 @@ export function PreviewModeToggle({ value, onChange }: PreviewModeToggleProps) {
       role="group"
       aria-label="Preview width"
     >
-      <Segment active={value === "mobile"} onClick={() => onChange("mobile")}>
+      <Segment
+        active={value === "mobile"}
+        onClick={() => onChange("mobile")}
+        aria-label="Mobile preview width"
+      >
         <Smartphone className="h-3.5 w-3.5" strokeWidth={2.25} />
-        Mobile
+        <span className="hidden sm:inline">Mobile</span>
       </Segment>
-      <Segment active={value === "desktop"} onClick={() => onChange("desktop")}>
+      <Segment
+        active={value === "desktop"}
+        onClick={() => onChange("desktop")}
+        aria-label="Desktop preview width"
+      >
         <Monitor className="h-3.5 w-3.5" strokeWidth={2.25} />
-        Desktop
+        <span className="hidden sm:inline">Desktop</span>
       </Segment>
     </div>
   );

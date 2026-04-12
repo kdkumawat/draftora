@@ -58,11 +58,20 @@ const faqs: { q: string; a: string }[] = [
   },
 ];
 
-export function EditorSupportSections() {
+type EditorSupportSectionsProps = {
+  className?: string;
+};
+
+export function EditorSupportSections({ className }: EditorSupportSectionsProps) {
   const [openId, setOpenId] = useState<number | null>(0);
 
   return (
-    <div className="mx-auto mt-6 max-w-6xl px-4 pb-14 sm:mt-8 sm:px-6">
+    <div
+      className={cn(
+        "mx-auto mt-6 max-w-6xl px-3 pb-12 sm:mt-8 sm:px-5 sm:pb-14 lg:px-6",
+        className,
+      )}
+    >
       <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10 xl:gap-12">
         <section
           className={cn(

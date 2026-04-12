@@ -24,7 +24,7 @@ function LinkedInGlyph({ className }: { className?: string }) {
 }
 
 const navLinkClass = cn(
-  "inline-flex items-center rounded-lg border border-[var(--app-chrome-border)] bg-[var(--app-chrome-elevated)] px-3 py-2 text-sm font-medium",
+  "inline-flex shrink-0 items-center rounded-lg border border-[var(--app-chrome-border)] bg-[var(--app-chrome-elevated)] px-2.5 py-2 text-xs font-medium sm:px-3 sm:text-sm",
   "text-[var(--foreground)] transition-[transform,background-color,box-shadow] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
   "hover:bg-black/[0.05] hover:shadow-sm dark:hover:bg-white/[0.07]",
   "active:scale-[0.98] active:duration-100",
@@ -43,8 +43,9 @@ function TemplatesButton({ onTemplates }: { onTemplates: () => void }) {
       type="button"
       onClick={onTemplates}
       onPointerDown={onPointerDown}
+      aria-label="Templates"
       className={cn(
-        "relative inline-flex items-center gap-2 overflow-hidden rounded-lg px-3 py-2 text-sm font-medium",
+        "relative inline-flex shrink-0 items-center gap-2 overflow-hidden rounded-lg px-2.5 py-2 text-sm font-medium sm:px-3",
         "bg-[var(--accent)] text-[var(--accent-on-accent)]",
         "shadow-[0_4px_20px_-4px_color-mix(in_oklab,var(--accent)_45%,transparent)]",
         "transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
@@ -71,7 +72,7 @@ function TemplatesButton({ onTemplates }: { onTemplates: () => void }) {
       ))}
       <span className="relative z-[1] inline-flex items-center gap-2">
         <LayoutTemplate className="h-4 w-4 opacity-95" strokeWidth={2} />
-        Templates
+        <span className="hidden sm:inline">Templates</span>
       </span>
     </button>
   );
@@ -86,7 +87,7 @@ function FollowLinkedInLink() {
       rel="noopener noreferrer"
       onPointerDown={onPointerDown}
       className={cn(
-        "relative inline-flex items-center gap-2 overflow-hidden rounded-lg px-3 py-2 text-sm font-semibold text-white",
+        "relative inline-flex shrink-0 items-center gap-2 overflow-hidden rounded-lg px-2.5 py-2 text-sm font-semibold text-white sm:px-3",
         "bg-[#0a66c2]",
         "transition-[transform,background-color,box-shadow] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
         "hover:bg-[#004182] hover:shadow-md",
@@ -113,7 +114,7 @@ function FollowLinkedInLink() {
       ))}
       <span className="relative z-[1] inline-flex items-center gap-2">
         <LinkedInGlyph className="h-4 w-4 shrink-0" />
-        Follow
+        <span className="hidden sm:inline">Follow</span>
       </span>
     </a>
   );
@@ -128,29 +129,26 @@ export function Header({ onTemplates, activePage = "editor" }: HeaderProps) {
         "supports-[backdrop-filter]:bg-[var(--app-chrome)]/70",
       )}
     >
-      <div className="mx-auto flex min-h-12 max-w-7xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-2 sm:min-h-14 sm:px-6 sm:py-2.5">
-        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
-          <Link href="/" className="text-[var(--accent)]" aria-label="Draftora home">
+      <div className="mx-auto flex min-h-12 max-w-7xl flex-col gap-2 px-3 py-2 sm:min-h-14 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-3 sm:gap-y-2 sm:px-5 sm:py-2.5 lg:px-6">
+        <div className="flex min-w-0 min-h-0 flex-1 items-center gap-2 sm:gap-2.5">
+          <Link href="/" className="shrink-0 text-[var(--accent)]" aria-label="Draftora home">
             <LogoMark className="h-8 w-8 sm:h-9 sm:w-9" />
           </Link>
           <div className="min-w-0">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0">
               <Link
                 href="/"
-                className="text-[15px] font-medium tracking-tight text-[var(--foreground)] hover:underline"
+                className="truncate text-[15px] font-medium tracking-tight text-[var(--foreground)] hover:underline"
               >
                 Draftora
               </Link>
-              <span className="hidden text-[13px] leading-snug text-[var(--app-chrome-muted)] sm:inline">
+              <span className="hidden text-[13px] leading-snug text-[var(--app-chrome-muted)] xl:inline">
                 {TAGLINE}
               </span>
             </div>
-            <p className="mt-0.5 text-[12px] leading-snug text-[var(--app-chrome-muted)] sm:hidden">
-              Unicode styling &amp; live preview for LinkedIn.
-            </p>
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="scrollbar-hide flex min-w-0 shrink-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:gap-2 sm:overflow-visible sm:pb-0">
           {activePage === "docs" ? (
             <Link href="/" className={navLinkClass}>
               Editor

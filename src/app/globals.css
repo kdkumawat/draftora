@@ -60,6 +60,15 @@
 
 @custom-variant dark (.dark &);
 
+/* Horizontal scroll regions without visible scrollbar (header actions, toolbar) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -68,6 +77,18 @@ body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Feed preview: body grey, Unicode “bold” near-black (LinkedIn-style) */
+.preview-li-body .ln-uni-bold,
+.preview-li-body .ln-uni-italic,
+.preview-li-body .ln-uni-bold-italic {
+  color: #191919;
+}
+.dark .preview-li-body .ln-uni-bold,
+.dark .preview-li-body .ln-uni-italic,
+.dark .preview-li-body .ln-uni-bold-italic {
+  color: #f3f3f3;
 }
 
 /* Unicode math blocks render shorter than Latin in many fonts - nudge size/weight in preview */

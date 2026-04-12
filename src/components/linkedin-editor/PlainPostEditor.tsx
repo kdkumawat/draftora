@@ -342,7 +342,8 @@ export const PlainPostEditor = forwardRef<HTMLTextAreaElement, PlainPostEditorPr
     return (
       <div
         className={cn(
-          "flex min-h-[min(72vh,680px)] flex-col overflow-hidden rounded-2xl border bg-[var(--card)]",
+          "flex min-h-[min(52vh,560px)] flex-col overflow-hidden rounded-2xl border bg-[var(--card)]",
+          "sm:min-h-[min(68vh,640px)] md:min-h-[min(72vh,680px)]",
           "border-[var(--app-chrome-border)] shadow-[0_8px_40px_-12px_color-mix(in_oklab,var(--accent)_18%,transparent)]",
           "ring-1 ring-violet-500/[0.08] dark:ring-violet-400/10",
         )}
@@ -362,10 +363,10 @@ export const PlainPostEditor = forwardRef<HTMLTextAreaElement, PlainPostEditorPr
           onRedo={onRedo}
         />
 
-        <div className="mx-auto flex min-h-0 w-full max-w-[680px] flex-1 flex-col px-3 pt-1 sm:px-5">
+        <div className="mx-auto flex min-h-0 w-full max-w-[min(100%,720px)] flex-1 flex-col px-2.5 pt-1 sm:px-5">
           <div
             className={cn(
-              "relative flex min-h-[min(40vh,360px)] flex-1 flex-col overflow-hidden rounded-xl border",
+              "relative flex min-h-[min(34vh,300px)] flex-1 flex-col overflow-hidden rounded-xl border sm:min-h-[min(40vh,360px)]",
               "border-[var(--app-chrome-border)] bg-[var(--background)]",
             )}
           >
@@ -390,7 +391,7 @@ export const PlainPostEditor = forwardRef<HTMLTextAreaElement, PlainPostEditorPr
               onPaste={onPaste}
               spellCheck
               className={cn(
-                "relative z-10 min-h-[min(36vh,320px)] w-full flex-1 resize-none bg-transparent px-6 py-5",
+                "relative z-10 min-h-[min(30vh,260px)] w-full flex-1 resize-none bg-transparent px-4 py-4 sm:min-h-[min(36vh,320px)] sm:px-6 sm:py-5",
                 "text-[16px] leading-[1.65] tracking-[-0.015em] text-[var(--foreground)] outline-none placeholder:text-[var(--app-chrome-muted)] sm:text-[17px]",
                 "selection:bg-black/12 selection:text-[var(--foreground)] dark:selection:bg-white/18",
               )}
