@@ -52,13 +52,21 @@ function FooterResetButton({
   );
 }
 
-function FooterCopyButton({ onCopy }: { onCopy: () => void }) {
+function FooterCopyButton({
+  onCopy,
+  disabled,
+}: {
+  onCopy: () => void;
+  disabled: boolean;
+}) {
   const { ripples, onPointerDown, removeRipple } = useRipple();
   return (
     <button
       type="button"
       onClick={onCopy}
+      disabled={disabled}
       onPointerDown={onPointerDown}
+      title={disabled ? "Nothing to copy yet" : "Copy draft to clipboard"}
       className={cn(
         "relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-lg border border-transparent px-5 py-2.5 text-sm font-medium",
         "bg-[var(--accent)] text-[var(--accent-on-accent)] shadow-[0_4px_22px_-6px_color-mix(in_oklab,var(--accent)_50%,transparent)]",
@@ -66,6 +74,7 @@ function FooterCopyButton({ onCopy }: { onCopy: () => void }) {
         "hover:brightness-105 hover:shadow-[0_6px_26px_-6px_color-mix(in_oklab,var(--accent)_55%,transparent)]",
         "active:scale-[0.97] active:duration-100",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/35",
+        "disabled:cursor-not-allowed disabled:opacity-45 disabled:brightness-100 disabled:shadow-none disabled:hover:brightness-100 disabled:active:scale-100",
       )}
     >
       {ripples.map((r) => (
@@ -98,6 +107,7 @@ type EditorFooterBarProps = {
   warnAt: number;
   onReset: () => void;
   canReset: boolean;
+  canCopy: boolean;
   onCopy: () => void;
 };
 
@@ -107,6 +117,7 @@ export function EditorFooterBar({
   warnAt,
   onReset,
   canReset,
+  canCopy,
   onCopy,
 }: EditorFooterBarProps) {
   const tone =
@@ -136,7 +147,7 @@ export function EditorFooterBar({
       </p>
       <div className="flex flex-wrap items-center justify-end gap-2">
         <FooterResetButton canReset={canReset} onReset={onReset} />
-        <FooterCopyButton onCopy={onCopy} />
+        <FooterCopyButton onCopy={onCopy} disabled={!canCopy} />
       </div>
     </div>
   );

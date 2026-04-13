@@ -1,14 +1,18 @@
-/* Draftora service worker - offline shell + static assets (same-origin). */
-const CACHE_VERSION = "draftora-v2";
+/* Draftora service worker — offline shell + static assets. Bump CACHE_VERSION on each release. */
+const CACHE_VERSION = "draftora-v3";
 const CORE = ["/", "/icon.svg", "/logo.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches
-      .open(CACHE_VERSION)
-      .then((cache) => cache.addAll(CORE))
-      .then(() => self.skipWaiting()),
+    caches.open(CACHE_VERSION).then((cache) => cache.addAll(CORE)),
   );
+});
+
+/** Let the page call skipWaiting() after the user accepts an update (avoids stale UI without refresh). */
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("activate", (event) => {

@@ -415,6 +415,7 @@ export const PlainPostEditor = forwardRef<HTMLTextAreaElement, PlainPostEditorPr
           warnAt={WARN}
           onReset={onResetDraft}
           canReset={value.length > 0}
+          canCopy={value.length > 0}
           onCopy={onCopyText}
         />
       </div>
