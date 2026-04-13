@@ -5,7 +5,13 @@ import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { ToasterClient } from "@/components/providers/ToasterClient";
-import { absoluteUrl, siteDescriptionSocial, siteUrl } from "@/lib/site";
+import {
+  absoluteUrl,
+  ogAuthorUrl,
+  siteDescriptionSocial,
+  sitePublishedTime,
+  siteUrl,
+} from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,8 +41,8 @@ export const metadata: Metadata = {
     "offline LinkedIn editor",
     "Cloudflare Pages",
   ],
-  authors: [{ name: "Draftora", url: siteUrl }],
-  creator: "Draftora",
+  authors: [{ name: "Kuldeep Kumawat", url: ogAuthorUrl }],
+  creator: "Kuldeep Kumawat",
   publisher: "Draftora",
   formatDetection: {
     email: false,
@@ -44,12 +50,15 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    type: "website",
+    type: "article",
     locale: "en_US",
     url: absoluteUrl("/"),
     siteName: "Draftora",
     title: "Draftora - LinkedIn Post Editor & Unicode Formatter",
     description: siteDescriptionSocial,
+    publishedTime: sitePublishedTime,
+    modifiedTime: sitePublishedTime,
+    authors: [ogAuthorUrl],
   },
   twitter: {
     card: "summary_large_image",

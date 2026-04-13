@@ -1,4 +1,9 @@
-import { siteDescriptionSocial, siteUrl } from "@/lib/site";
+import {
+  ogAuthorUrl,
+  siteDescriptionSocial,
+  sitePublishedTime,
+  siteUrl,
+} from "@/lib/site";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -6,10 +11,12 @@ const jsonLd = {
   name: "Draftora",
   description: siteDescriptionSocial,
   url: siteUrl,
+  datePublished: sitePublishedTime,
+  dateModified: sitePublishedTime,
   author: {
-    "@type": "Organization",
-    name: "Draftora",
-    url: siteUrl,
+    "@type": "Person",
+    name: "Kuldeep Kumawat",
+    url: ogAuthorUrl,
   },
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
