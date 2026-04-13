@@ -1,11 +1,10 @@
-import { siteUrl } from "@/lib/site";
+import { siteDescriptionSocial, siteUrl } from "@/lib/site";
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: "Draftora",
-  description:
-    "Write LinkedIn-ready posts in plain text with Unicode formatting, mentions, hashtags, and a live feed preview. Copy and paste directly into LinkedIn. Works offline after first load.",
+  description: siteDescriptionSocial,
   url: siteUrl,
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",

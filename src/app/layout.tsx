@@ -5,7 +5,7 @@ import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { ToasterClient } from "@/components/providers/ToasterClient";
-import { absoluteUrl, siteUrl } from "@/lib/site";
+import { absoluteUrl, siteDescriptionSocial, siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -50,8 +50,7 @@ export const metadata: Metadata = {
     url: absoluteUrl("/"),
     siteName: "Draftora",
     title: "Draftora - LinkedIn Post Editor & Unicode Formatter",
-    description:
-      "Write LinkedIn-ready posts with Unicode styling, mentions, hashtags, and live preview.",
+    description: siteDescriptionSocial,
     images: [
       {
         url: "/logo.svg",
@@ -64,8 +63,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Draftora - LinkedIn Post Editor",
-    description:
-      "Plain-text LinkedIn studio with Unicode formatting, feed preview, and offline support.",
+    description: siteDescriptionSocial,
     images: ["/logo.svg"],
   },
   robots: {
