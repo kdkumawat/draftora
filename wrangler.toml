@@ -1,11 +1,11 @@
-# Cloudflare Pages - required for @cloudflare/next-on-pages (Node.js APIs in the Worker runtime).
+# Cloudflare Pages — required for @cloudflare/next-on-pages (Node.js APIs in the Worker runtime).
 # After adding this file, enable “Wrangler configuration” in Pages if prompted, or set the flag in the dashboard:
 # Settings → Functions → Compatibility flags → nodejs_compat (production + preview).
 #
 # `name` must match your Cloudflare Pages project name.
 # If you configure a custom build output directory in Pages, add:
 # pages_build_output_dir = ".vercel/output/static"
-# (exact path depends on your @cloudflare/next-on-pages build - check build logs)
+# (exact path depends on your @cloudflare/next-on-pages build — check build logs)
 
 name = "draftora"
 compatibility_date = "2026-04-11"
