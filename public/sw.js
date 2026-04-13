@@ -1,5 +1,5 @@
-/* Draftora service worker — offline shell + static assets. Bump CACHE_VERSION on each release. */
-const CACHE_VERSION = "draftora-v3.3";
+/* Draftora service worker - offline shell + static assets. Bump CACHE_VERSION on each release. */
+const CACHE_VERSION = "draftora-v3.4";
 const CORE = ["/", "/icon.svg", "/logo.svg"];
 
 self.addEventListener("install", (event) => {

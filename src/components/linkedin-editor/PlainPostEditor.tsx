@@ -45,6 +45,8 @@ type PlainPostEditorProps = {
   onUndo: () => void;
   onRedo: () => void;
   toolbarRef?: React.RefObject<HTMLDivElement | null>;
+  /** Feed has images while draft text may be empty */
+  hasPreviewAttachments?: boolean;
 };
 
 function mergeRefs<T>(
@@ -74,6 +76,7 @@ export const PlainPostEditor = forwardRef<HTMLTextAreaElement, PlainPostEditorPr
       onUndo,
       onRedo,
       toolbarRef,
+      hasPreviewAttachments = false,
     },
     ref,
   ) {
@@ -363,50 +366,48 @@ export const PlainPostEditor = forwardRef<HTMLTextAreaElement, PlainPostEditorPr
           onRedo={onRedo}
         />
 
-        <div className="mx-auto flex min-h-0 w-full max-w-[min(100%,720px)] flex-1 flex-col px-2.5 pt-1 sm:px-5">
-          <div
-            className={cn(
-              "relative flex min-h-[min(34vh,300px)] flex-1 flex-col overflow-hidden rounded-xl border sm:min-h-[min(40vh,360px)]",
-              "border-[var(--app-chrome-border)] bg-[var(--background)]",
-            )}
-          >
-            {value.length === 0 && (
-              <div
-                className="pointer-events-none absolute left-6 top-5 z-0 max-h-[min(48vh,380px)] max-w-[calc(100%-3rem)] overflow-hidden text-[16px] leading-[1.65] text-[var(--app-chrome-muted)] sm:text-[17px]"
-                aria-hidden
-              >
-                <p className="whitespace-pre-wrap">{EDITOR_EMPTY_PLACEHOLDER}</p>
-              </div>
-            )}
-            <textarea
-              ref={mergeRefs(innerRef, ref)}
-              value={value}
-              onChange={onChangeArea}
-              onKeyDown={onKeyDown}
-              onKeyUp={syncCursor}
-              onClick={syncCursor}
-              onSelect={syncCursor}
-              onMouseUp={syncCursor}
-              onScroll={syncCursor}
-              onPaste={onPaste}
-              spellCheck
+        <div className="relative mx-auto flex min-h-0 w-full max-w-[min(100%,720px)] flex-1 flex-col px-2 pt-0.5 sm:px-4">
+          {value.length === 0 && (
+            <div
               className={cn(
-                "relative z-10 min-h-[min(30vh,260px)] w-full flex-1 resize-none bg-transparent px-4 py-4 sm:min-h-[min(36vh,320px)] sm:px-6 sm:py-5",
-                "text-[16px] leading-[1.65] tracking-[-0.015em] text-[var(--foreground)] outline-none placeholder:text-[var(--app-chrome-muted)] sm:text-[17px]",
-                "selection:bg-black/12 selection:text-[var(--foreground)] dark:selection:bg-white/18",
+                "pointer-events-none absolute z-0 max-h-[min(48vh,380px)] overflow-hidden text-[15px] leading-[1.6] text-[var(--app-chrome-muted)] sm:text-[16px]",
+                "left-[calc(0.5rem+0.75rem)] right-[calc(0.5rem+0.75rem)] top-[calc(0.125rem+0.75rem)]",
+                "sm:left-[calc(1rem+1rem)] sm:right-[calc(1rem+1rem)] sm:top-[calc(0.125rem+1rem)]",
               )}
-              aria-label="LinkedIn post draft"
-            />
-            {mentionListOpen && mentionCtx && mentionItems.length > 0 && (
-              <MentionSuggestions
-                items={mentionItems}
-                highlightedIndex={safeMentionIndex}
-                onHighlight={setMentionIndex}
-                onPick={insertMention}
-                anchor={mentionAnchor}
-              />
+              aria-hidden
+            >
+              <p className="whitespace-pre-wrap">{EDITOR_EMPTY_PLACEHOLDER}</p>
+            </div>
+          )}
+          <textarea
+            ref={mergeRefs(innerRef, ref)}
+            value={value}
+            placeholder=""
+            onChange={onChangeArea}
+            onKeyDown={onKeyDown}
+            onKeyUp={syncCursor}
+            onClick={syncCursor}
+            onSelect={syncCursor}
+            onMouseUp={syncCursor}
+            onScroll={syncCursor}
+            onPaste={onPaste}
+            spellCheck
+            className={cn(
+              "relative z-10 min-h-[min(34vh,300px)] w-full flex-1 resize-none bg-transparent px-3 py-3 sm:min-h-[min(40vh,360px)] sm:px-4 sm:py-4",
+              "text-[16px] leading-[1.6] tracking-[-0.015em] text-[var(--foreground)] outline-none placeholder:text-[var(--app-chrome-muted)] sm:text-[17px]",
+              "selection:bg-violet-500/25 selection:text-[var(--foreground)] dark:selection:bg-violet-400/35",
             )}
-          </div>
+            aria-label="LinkedIn post draft"
+          />
+          {mentionListOpen && mentionCtx && mentionItems.length > 0 && (
+            <MentionSuggestions
+              items={mentionItems}
+              highlightedIndex={safeMentionIndex}
+              onHighlight={setMentionIndex}
+              onPick={insertMention}
+              anchor={mentionAnchor}
+            />
+          )}
         </div>
 
         <EditorFooterBar
@@ -414,7 +415,7 @@ export const PlainPostEditor = forwardRef<HTMLTextAreaElement, PlainPostEditorPr
           max={MAX}
           warnAt={WARN}
           onReset={onResetDraft}
-          canReset={value.length > 0}
+          canReset={value.length > 0 || hasPreviewAttachments}
           canCopy={value.length > 0}
           onCopy={onCopyText}
         />

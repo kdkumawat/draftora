@@ -15,7 +15,7 @@ export function LandingHero() {
             </span>
           </h1>
           <p className="mt-1 hidden max-w-xl text-[13px] leading-snug text-[var(--app-chrome-muted)] sm:block sm:text-[14px]">
-            Paste **markdown** markers — Unicode styling, mentions, and hashtags.
+            Paste **markdown** markers - Unicode styling, mentions, and hashtags.
           </p>
         </div>
         <p

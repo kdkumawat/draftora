@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { EmojiPickerPopover } from "@/components/linkedin-editor/EmojiPickerPopover";
 import { EditorSupportSections } from "@/components/linkedin-editor/EditorSupportSections";
@@ -12,6 +12,7 @@ import {
   type PreviewFrame,
 } from "@/components/linkedin-editor/PreviewModeToggle";
 import { PreviewCard } from "@/components/linkedin-editor/PreviewCard";
+import { ResetDraftModal } from "@/components/linkedin-editor/ResetDraftModal";
 import { TemplatesDialog } from "@/components/linkedin-editor/TemplatesDialog";
 import { useUndoHistory } from "@/hooks/useUndoHistory";
 import { normalizeNoEmDash } from "@/lib/unicode/normalize";
@@ -46,18 +47,33 @@ export function EditorPageClient() {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const previewImagesRef = useRef<string[]>([]);
+  previewImagesRef.current = previewImages;
+  const [resetModalOpen, setResetModalOpen] = useState(false);
 
-  const resetDraft = useCallback(() => {
-    if (value.length === 0) return;
-    const ok = window.confirm(
-      "Clear the entire draft? This removes all text and formatting.",
-    );
-    if (!ok) return;
+  useEffect(() => {
+    return () => {
+      previewImagesRef.current.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, []);
+
+  const performResetDraft = useCallback(() => {
     resetHistory();
     setValue("");
+    setPreviewImages((prev) => {
+      for (const u of prev) URL.revokeObjectURL(u);
+      return [];
+    });
     requestAnimationFrame(() => textareaRef.current?.focus());
     toast.success("Draft cleared.");
-  }, [value.length, resetHistory, setValue]);
+  }, [resetHistory, setValue]);
+
+  const requestResetDraft = useCallback(() => {
+    if (value.length === 0 && previewImages.length === 0) return;
+    setResetModalOpen(true);
+  }, [value.length, previewImages.length]);
 
   const copyToClipboard = useCallback(async () => {
     try {
@@ -80,11 +96,32 @@ export function EditorPageClient() {
   }, []);
 
   const onImage = useCallback(() => {
-    toast.message("Images and media", {
-      description:
-        "Add photos, videos, or documents when you create the post on LinkedIn after pasting your text.",
-    });
+    imageInputRef.current?.click();
   }, []);
+
+  const onImageFiles = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files?.length) return;
+      const added: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        if (f?.type.startsWith("image/")) {
+          added.push(URL.createObjectURL(f));
+        }
+      }
+      e.target.value = "";
+      if (added.length === 0) {
+        toast.error("Choose an image file.");
+        return;
+      }
+      setPreviewImages((prev) => {
+        for (const u of prev) URL.revokeObjectURL(u);
+        return added;
+      });
+    },
+    [],
+  );
 
   const handleEdit = useCallback(
     (v: string) => {
@@ -176,7 +213,8 @@ export function EditorPageClient() {
               onEmoji={openEmojiAtToolbar}
               onImage={onImage}
               onCopyText={copyToClipboard}
-              onResetDraft={resetDraft}
+              onResetDraft={requestResetDraft}
+              hasPreviewAttachments={previewImages.length > 0}
               canUndo={canUndo}
               canRedo={canRedo}
               onUndo={undo}
@@ -207,6 +245,18 @@ export function EditorPageClient() {
               fullPlain={value}
               isEmpty={value.trim().length === 0}
               frame={previewFrame}
+              attachmentUrls={previewImages}
+            />
+
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="sr-only"
+              tabIndex={-1}
+              aria-hidden
+              onChange={onImageFiles}
             />
           </aside>
         </div>
@@ -232,6 +282,12 @@ export function EditorPageClient() {
           setEmojiAnchor(null);
         }}
         onEmoji={insertEmoji}
+      />
+
+      <ResetDraftModal
+        open={resetModalOpen}
+        onClose={() => setResetModalOpen(false)}
+        onConfirm={performResetDraft}
       />
     </div>
   );

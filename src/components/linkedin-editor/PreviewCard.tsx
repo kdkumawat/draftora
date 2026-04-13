@@ -12,7 +12,9 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import Link from "next/link";
+import { InstantTooltip } from "@/components/linkedin-editor/InstantTooltip";
 import { PostPreview } from "@/components/linkedin-editor/PostPreview";
+import { LI_REACTION_STACK } from "@/lib/linkedin/reactionAssets";
 import { cn } from "@/lib/utils/cn";
 
 /** Feed preview avatar - place `public/IMG_1165_small.PNG` in the project */
@@ -28,6 +30,8 @@ type PreviewCardProps = {
   authorTitle?: string;
   /** Visual width hint for the card shell */
   frame?: "mobile" | "desktop";
+  /** Feed preview images (e.g. object URLs from the editor) */
+  attachmentUrls?: string[];
 };
 
 export function PreviewCard({
@@ -36,6 +40,7 @@ export function PreviewCard({
   authorName = "Kuldeep Kumawat",
   authorTitle = "Designing distributed systems that don't fail at scale | Node.js · Go · Kafka · AWS · K8s",
   frame = "desktop",
+  attachmentUrls = [],
 }: PreviewCardProps) {
   return (
     <div
@@ -118,7 +123,7 @@ export function PreviewCard({
       </div>
 
       <div className="px-3 pb-2 pt-2 sm:px-4 sm:pb-2.5 sm:pt-2.5">
-        {isEmpty ? (
+        {isEmpty && attachmentUrls.length === 0 ? (
           <p
             className="text-[14px] leading-[1.35]"
             style={{ color: LI_MUTED }}
@@ -127,24 +132,39 @@ export function PreviewCard({
             Unicode bold/italic copy as plain text into LinkedIn.
           </p>
         ) : (
-          <PostPreview text={fullPlain} />
+          <PostPreview text={fullPlain} attachmentUrls={attachmentUrls} />
         )}
       </div>
 
-      <div className="flex items-center justify-between px-3 pb-1 pt-0.5 sm:px-4">
-        <div className="flex min-w-0 items-center gap-1.5">
-          <span className="flex -space-x-1" aria-hidden>
-            <ReactionDot className="z-30 border border-white bg-[#378fe9] dark:border-[#1d2226]" />
-            <ReactionDot className="z-20 border border-white bg-[#df704d] dark:border-[#1d2226]" />
-            <ReactionDot className="z-10 border border-white bg-[#6dae4f] dark:border-[#1d2226]" />
-          </span>
-          <span
-            className="truncate text-[12px] leading-tight"
-            style={{ color: LI_MUTED }}
-          >
-            You and 1,124 others
-          </span>
-        </div>
+      <div className="flex items-center justify-between gap-2 px-3 pb-1 pt-0.5 sm:px-4">
+        
+          <div className="flex min-w-0 flex-1 cursor-default items-center gap-1.5 overflow-hidden">
+            <span className="flex shrink-0 -space-x-1.5" aria-hidden>
+              {LI_REACTION_STACK.map(({ src, alt }) => (
+                <span
+                  key={src}
+                  className="relative inline-block h-4 w-4 shrink-0 overflow-hidden rounded-full ring-2 ring-white dark:ring-[#1d2226]"
+                >
+                  {/* Native img: LinkedIn CDN + reliable preview outside Image optimizer */}
+                  <img
+                    src={src}
+                    alt={alt}
+                    width={16}
+                    height={16}
+                    className="block h-4 w-4 object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              ))}
+            </span>
+            <span
+              className="min-w-0 truncate text-[12px] leading-tight"
+              style={{ color: LI_MUTED }}
+            >
+              Alex Chen and 1,124 others
+            </span>
+          </div>
         <span
           className="shrink-0 text-[12px] leading-tight"
           style={{ color: LI_MUTED }}
@@ -155,8 +175,13 @@ export function PreviewCard({
 
       <div className="mx-3 h-px bg-black/[0.08] dark:bg-white/10 sm:mx-4" />
 
-      <div className="grid grid-cols-4 gap-0 px-0.5 pb-1.5 pt-0.5 sm:px-1 sm:pb-2">
-        <FooterAction icon={ThumbsUp} label="Like" />
+      <div className="flex w-full px-0 pb-1.5 pt-0.5 sm:pb-2">
+        <FooterAction
+          icon={ThumbsUp}
+          label="Like"
+          variant="like"
+          active
+        />
         <FooterAction icon={MessageCircle} label="Comment" />
         <FooterAction icon={Repeat2} label="Repost" />
         <FooterAction icon={Send} label="Send" />
@@ -165,28 +190,44 @@ export function PreviewCard({
   );
 }
 
-function ReactionDot({ className }: { className?: string }) {
-  return (
-    <span
-      className={cn("inline-flex h-4 w-4 items-center justify-center rounded-full", className)}
-    />
-  );
-}
-
 function FooterAction({
   icon: Icon,
   label,
+  active,
+  variant = "default",
 }: {
   icon: LucideIcon;
   label: string;
+  active?: boolean;
+  variant?: "default" | "like";
 }) {
+  const isLike = variant === "like";
+  const likeOn = isLike && active;
+
   return (
     <button
       type="button"
-      className="flex flex-col items-center gap-0.5 rounded py-2 text-[#666666] transition-colors hover:bg-black/[0.04] dark:text-[#a4a4a4] dark:hover:bg-white/[0.06]"
+      className={cn(
+        "flex min-h-[44px] flex-1 flex-row items-center justify-center gap-2 px-1 py-2 transition-colors",
+        "hover:bg-black/[0.04] dark:hover:bg-white/[0.06]",
+        likeOn
+          ? "text-[#0a66c2] dark:text-[#70b5f9]"
+          : "text-[#666666] dark:text-[#a4a4a4]",
+      )}
     >
-      <Icon className="h-[22px] w-[22px]" strokeWidth={1.65} />
-      <span className="text-[12px] font-semibold">{label}</span>
+      {likeOn ? (
+        <>
+          <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#378fe9]">
+            <ThumbsUp className="h-2.5 w-2.5 text-white" strokeWidth={2.5} />
+          </span>
+          <span className="text-[13px] font-semibold leading-none">{label}</span>
+        </>
+      ) : (
+        <>
+          <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.65} />
+          <span className="text-[13px] font-semibold leading-none">{label}</span>
+        </>
+      )}
     </button>
   );
 }

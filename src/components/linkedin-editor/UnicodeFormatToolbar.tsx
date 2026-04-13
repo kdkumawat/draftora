@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, type ReactNode } from "react";
+import { forwardRef, type ReactNode, useState } from "react";
 import {
   Bold,
   Eraser,
@@ -13,10 +13,10 @@ import {
   ListOrdered,
   Redo2,
   Smile,
-  Sparkles,
   Strikethrough,
   Underline,
   Undo2,
+  Wand2,
 } from "lucide-react";
 import {
   shiftIndent,
@@ -33,6 +33,7 @@ import { readTextareaScroll, writeTextareaScroll } from "@/lib/editor/textareaSc
 import { applyUnicodeStyle } from "@/lib/unicode/style";
 import type { StyleKind } from "@/lib/unicode/style";
 import type { ToolbarFormatState } from "@/lib/unicode/selectionFormat";
+import { InstantTooltip } from "@/components/linkedin-editor/InstantTooltip";
 import { useRipple } from "@/hooks/useRipple";
 import { cn } from "@/lib/utils/cn";
 
@@ -51,6 +52,8 @@ export type UnicodeFormatToolbarProps = {
   canRedo: boolean;
   onUndo: () => void;
   onRedo: () => void;
+  /** When set, Beautify runs this (e.g. POST /api/beautify); otherwise local whitespace cleanup */
+  onBeautifyAI?: (text: string) => Promise<string>;
 };
 
 export const UnicodeFormatToolbar = forwardRef<
@@ -69,9 +72,11 @@ export const UnicodeFormatToolbar = forwardRef<
     canRedo,
     onUndo,
     onRedo,
+    onBeautifyAI,
   },
   ref,
 ) {
+  const [beautifyBusy, setBeautifyBusy] = useState(false);
   const ta = () => textareaRef.current;
 
   const commit = (next: string, selStart?: number, selEnd?: number) => {
@@ -127,13 +132,23 @@ export const UnicodeFormatToolbar = forwardRef<
     commit(next, a, a + stripped.length);
   };
 
-  const onBeautify = () => {
+  const onBeautify = async () => {
     const el = ta();
-    if (!el) return;
-    const next = beautifyPost(value);
-    if (next.length > MAX) return;
-    const pos = Math.min(next.length, el.selectionStart);
-    commit(next, pos, pos);
+    if (!el || beautifyBusy) return;
+    setBeautifyBusy(true);
+    try {
+      let next: string;
+      if (onBeautifyAI) {
+        next = await onBeautifyAI(value);
+      } else {
+        next = beautifyPost(value);
+      }
+      if (next.length > MAX) return;
+      const pos = Math.min(next.length, el.selectionStart);
+      commit(next, pos, pos);
+    } finally {
+      setBeautifyBusy(false);
+    }
   };
 
   const onLink = () => {
@@ -292,8 +307,19 @@ export const UnicodeFormatToolbar = forwardRef<
         <Divider />
 
         <ToolGroup>
-          <ToolbarButton tooltip="Beautify" onClick={onBeautify}>
-            <Sparkles className="h-[15px] w-[15px]" strokeWidth={2} />
+          <ToolbarButton
+            tooltip="Beautify - spacing & line breaks"
+            onClick={() => void onBeautify()}
+            disabled={beautifyBusy}
+            aiAccent
+          >
+            <Wand2
+              className={cn(
+                "h-[15px] w-[15px] text-violet-600 dark:text-violet-300",
+                beautifyBusy && "opacity-50",
+              )}
+              strokeWidth={2.25}
+            />
           </ToolbarButton>
         </ToolGroup>
       </div>
@@ -323,53 +349,60 @@ function ToolbarButton({
   pressed,
   onClick,
   disabled,
+  aiAccent,
   children,
 }: {
   tooltip: string;
   pressed?: boolean;
   onClick: () => void;
   disabled?: boolean;
+  /** Distinct styling for the Beautify / AI action */
+  aiAccent?: boolean;
   children: ReactNode;
 }) {
   const { ripples, onPointerDown, removeRipple } = useRipple();
 
   return (
-    <button
-      type="button"
-      title={tooltip}
-      aria-label={tooltip}
-      aria-pressed={pressed ?? false}
-      disabled={disabled}
-      onClick={onClick}
-      onPointerDown={onPointerDown}
-      className={cn(
-        "relative z-0 inline-flex h-8 min-w-8 shrink-0 touch-manipulation items-center justify-center overflow-hidden rounded-md text-[var(--foreground)]/75",
-        "transition-[transform,background-color,color,box-shadow] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform",
-        "hover:bg-black/[0.07] hover:text-[var(--foreground)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:hover:bg-white/[0.09] dark:hover:shadow-[0_1px_3px_rgba(0,0,0,0.25)]",
-        "active:scale-[0.94] active:duration-100",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)]/15",
-        pressed &&
-          "bg-violet-500/15 text-violet-700 hover:bg-violet-500/22 dark:bg-violet-400/18 dark:text-violet-200 dark:hover:bg-violet-400/26",
-        disabled && "cursor-not-allowed opacity-40 hover:bg-transparent hover:shadow-none active:scale-100",
-      )}
-    >
-      {ripples.map((r) => (
-        <span
-          key={r.id}
-          className="pointer-events-none absolute rounded-full bg-violet-600/25 dark:bg-violet-300/22"
-          style={{
-            left: r.x,
-            top: r.y,
-            width: 36,
-            height: 36,
-            transform: "translate(-50%, -50%)",
-            animation:
-              "press-ripple 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards",
-          }}
-          onAnimationEnd={() => removeRipple(r.id)}
-        />
-      ))}
-      <span className="relative z-[1] inline-flex">{children}</span>
-    </button>
+    <InstantTooltip label={tooltip}>
+      <button
+        type="button"
+        aria-label={tooltip}
+        aria-pressed={pressed ?? false}
+        disabled={disabled}
+        onClick={onClick}
+        onPointerDown={onPointerDown}
+        className={cn(
+          "relative z-0 inline-flex h-8 min-w-8 shrink-0 touch-manipulation items-center justify-center overflow-hidden rounded-md text-[var(--foreground)]/75",
+          "transition-[transform,background-color,color,box-shadow] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform",
+          "hover:bg-black/[0.07] hover:text-[var(--foreground)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:hover:bg-white/[0.09] dark:hover:shadow-[0_1px_3px_rgba(0,0,0,0.25)]",
+          "active:scale-[0.94] active:duration-100",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)]/20",
+          pressed &&
+            "bg-violet-500/28 text-violet-800 shadow-[inset_0_0_0_1px_rgba(109,40,217,0.35)] hover:bg-violet-500/34 hover:text-violet-900 dark:bg-violet-500/32 dark:text-violet-100 dark:shadow-[inset_0_0_0_1px_rgba(167,139,250,0.45)] dark:hover:bg-violet-500/40",
+          aiAccent &&
+            !pressed &&
+            "bg-gradient-to-br from-violet-500/12 via-fuchsia-500/10 to-violet-600/12 text-violet-700 shadow-[inset_0_0_0_1px_rgba(139,92,246,0.25)] hover:from-violet-500/18 hover:via-fuchsia-500/14 hover:to-violet-600/18 dark:from-violet-400/14 dark:via-fuchsia-400/10 dark:to-violet-500/14 dark:text-violet-100 dark:shadow-[inset_0_0_0_1px_rgba(167,139,250,0.35)]",
+          disabled && "cursor-not-allowed opacity-40 hover:bg-transparent hover:shadow-none active:scale-100",
+        )}
+      >
+        {ripples.map((r) => (
+          <span
+            key={r.id}
+            className="pointer-events-none absolute rounded-full bg-violet-600/25 dark:bg-violet-300/22"
+            style={{
+              left: r.x,
+              top: r.y,
+              width: 36,
+              height: 36,
+              transform: "translate(-50%, -50%)",
+              animation:
+                "press-ripple 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+            }}
+            onAnimationEnd={() => removeRipple(r.id)}
+          />
+        ))}
+        <span className="relative z-[1] inline-flex">{children}</span>
+      </button>
+    </InstantTooltip>
   );
 }

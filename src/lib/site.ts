@@ -9,7 +9,7 @@ export const siteUrl =
 export const siteDescriptionSocial =
   "Draftora is a free browser app for drafting LinkedIn posts in plain text: Unicode bold, italic, underline, mentions, hashtags, and links, with a live feed preview before you paste into LinkedIn. Paste markdown-style markers, copy your text, and publish. Works offline after the first visit.";
 
-/** ISO 8601 — `article:published_time` / `article:modified_time` for OG (LinkedIn Post Inspector). Override with NEXT_PUBLIC_OG_PUBLISHED_TIME. */
+/** ISO 8601 - `article:published_time` / `article:modified_time` for OG (LinkedIn Post Inspector). Override with NEXT_PUBLIC_OG_PUBLISHED_TIME. */
 export const sitePublishedTime =
   process.env.NEXT_PUBLIC_OG_PUBLISHED_TIME ?? "2026-04-11T00:00:00.000Z";
 
