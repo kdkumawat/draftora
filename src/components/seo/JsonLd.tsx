@@ -6,6 +6,11 @@ const jsonLd = {
   name: "Draftora",
   description: siteDescriptionSocial,
   url: siteUrl,
+  author: {
+    "@type": "Organization",
+    name: "Draftora",
+    url: siteUrl,
+  },
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   offers: {

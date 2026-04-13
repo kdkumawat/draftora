@@ -24,8 +24,7 @@ export const metadata: Metadata = {
     default: "Draftora - LinkedIn Post Editor & Unicode Formatter",
     template: "%s | Draftora",
   },
-  description:
-    "Draft LinkedIn posts in plain text: Unicode bold, italic, underline, mentions, hashtags, links, and a live feed preview. Paste markdown, copy to LinkedIn. Works offline after first visit.",
+  description: siteDescriptionSocial,
   keywords: [
     "LinkedIn post editor",
     "LinkedIn post formatter",
@@ -51,20 +50,11 @@ export const metadata: Metadata = {
     siteName: "Draftora",
     title: "Draftora - LinkedIn Post Editor & Unicode Formatter",
     description: siteDescriptionSocial,
-    images: [
-      {
-        url: "/logo.svg",
-        width: 512,
-        height: 512,
-        alt: "Draftora logo",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Draftora - LinkedIn Post Editor",
+    title: "Draftora - LinkedIn Post Editor & Unicode Formatter",
     description: siteDescriptionSocial,
-    images: ["/logo.svg"],
   },
   robots: {
     index: true,
